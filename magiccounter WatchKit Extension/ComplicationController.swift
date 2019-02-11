@@ -32,8 +32,40 @@ class ComplicationController: NSObject, CLKComplicationDataSource {
     // MARK: - Timeline Population
     
     func getCurrentTimelineEntry(for complication: CLKComplication, withHandler handler: @escaping (CLKComplicationTimelineEntry?) -> Void) {
-        // Call the handler with the current timeline entry
-        handler(nil)
+        
+        let template: CLKComplicationTemplate
+        let state = Game(myLife: 15, opponentLife: 30)
+
+        switch complication.family {
+        case .graphicCorner:
+            
+            
+            let gaugeTemplate = CLKComplicationTemplateGraphicCornerGaugeText()
+            gaugeTemplate.leadingTextProvider = CLKTextProvider.localizableTextProvider(withStringsFileTextKey: String(state.myLife))
+            gaugeTemplate.trailingTextProvider = CLKTextProvider.localizableTextProvider(withStringsFileTextKey: String(state.opponentLife))
+            
+            let fraction = Float(state.myLife) / Float(state.myLife + state.opponentLife)
+            
+            let gaugeProvider = CLKSimpleGaugeProvider(style: .ring,
+                                                       gaugeColors: [.green, .orange],
+                                                       gaugeColorLocations: [0, NSNumber(value: fraction)],
+                                                       fillFraction: fraction)
+            gaugeTemplate.gaugeProvider = gaugeProvider
+            gaugeTemplate.outerTextProvider = CLKTextProvider.localizableTextProvider(withStringsFileTextKey: "LIFE")
+            template = gaugeTemplate
+            
+        case .modularSmall:
+            let simpleTextTemplate = CLKComplicationTemplateModularSmallSimpleText()
+            simpleTextTemplate.textProvider = CLKTextProvider.localizableTextProvider(withStringsFileTextKey: "\(state.myLife)/\(state.opponentLife)")
+            template = simpleTextTemplate
+            
+        default:
+            handler(nil)
+            return
+        }
+        let entry = CLKComplicationTimelineEntry(date: Date(), complicationTemplate: template)
+        
+        handler(entry)
     }
     
     func getTimelineEntries(for complication: CLKComplication, before date: Date, limit: Int, withHandler handler: @escaping ([CLKComplicationTimelineEntry]?) -> Void) {

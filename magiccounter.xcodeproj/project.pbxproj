@@ -20,6 +20,7 @@
 		5B7929242210C252004BBB14 /* ComplicationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7929232210C252004BBB14 /* ComplicationController.swift */; };
 		5B7929262210C252004BBB14 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5B7929252210C252004BBB14 /* Assets.xcassets */; };
 		5BD0EE852210DBCA008AEDE7 /* CounterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD0EE842210DBCA008AEDE7 /* CounterController.swift */; };
+		C597011022118F740013072B /* CounterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD0EE842210DBCA008AEDE7 /* CounterController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -302,6 +303,7 @@
 			files = (
 				5B7929222210C252004BBB14 /* ExtensionDelegate.swift in Sources */,
 				5B7929202210C252004BBB14 /* InterfaceController.swift in Sources */,
+				C597011022118F740013072B /* CounterController.swift in Sources */,
 				5B7929242210C252004BBB14 /* ComplicationController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -473,7 +475,7 @@
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 5.1;
 			};
@@ -495,7 +497,7 @@
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 5.1;
 			};
@@ -552,8 +554,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.alistra.magiccounter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -570,8 +572,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.alistra.magiccounter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

@@ -23,10 +23,10 @@ class GameHistory: Codable {
         history.removeLast()
     }
     
-    var currentState: Game? {
+    var currentState: Game {
         guard let last = history.last else {
             print("No history elements")
-            return nil
+            return Game(myLife: 20, opponentLife: 20)
         }
         
         return last
@@ -62,10 +62,12 @@ struct Game: Codable {
 }
 
 class CounterController {
-    let shared = CounterController()
+    public static let shared = CounterController()
     private let userDefaults: UserDefaults = .standard
     
-    
+    var currentGameHistory: GameHistory {
+        return userDefaults.currentGameHistory
+    }
     
 }
 
