@@ -9,10 +9,10 @@
 import Foundation
 
 class GameHistory: Codable {
-    var history: [Game] = [Game.newGame]
+    var states: [Game] = [Game.newGame]
     
     var canUndo: Bool {
-       return history.count > 1
+       return states.count > 1
     }
     
     func undo() {
@@ -20,11 +20,11 @@ class GameHistory: Codable {
             print("Tried to undo when can't")
             return
         }
-        history.removeLast()
+        states.removeLast()
     }
     
     var currentState: Game {
-        guard let last = history.last else {
+        guard let last = states.last else {
             print("No history elements")
             return Game(myLife: 20, opponentLife: 20)
         }
@@ -33,7 +33,7 @@ class GameHistory: Codable {
     }
 }
 
-struct Game: Codable {
+struct Game: Codable, CustomStringConvertible {
     enum Winner: Int, Codable {
         case noWinnerYet
         case me
@@ -59,16 +59,39 @@ struct Game: Codable {
             return .none
         }
     }
+    
+    var description: String {
+        return "Game(me: \(myLife), opp: \(opponentLife))"
+    }
 }
 
-class CounterController {
+class CounterController: NSObject {
     public static let shared = CounterController()
     private let userDefaults: UserDefaults = .standard
     
     var currentGameHistory: GameHistory {
         return userDefaults.currentGameHistory
     }
+
+    private func modifyHistory(block: (Game) -> (Game)) {
+        let history = userDefaults.currentGameHistory
+        history.states.append(block(userDefaults.currentGameHistory.currentState))
+        userDefaults.currentGameHistory = history
+ 
+        print(history.states)
+    }
     
+    @objc func change(myLife: NSNumber) {
+        modifyHistory {
+            return Game(myLife: myLife.intValue, opponentLife: $0.opponentLife)
+        }
+    }
+    
+    @objc func change(opponentLife: NSNumber) {
+        modifyHistory {
+            return Game(myLife: $0.myLife, opponentLife: opponentLife.intValue)
+        }
+    }
 }
 
 extension UserDefaults {

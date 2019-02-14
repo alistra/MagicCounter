@@ -34,7 +34,7 @@ class ComplicationController: NSObject, CLKComplicationDataSource {
     func getCurrentTimelineEntry(for complication: CLKComplication, withHandler handler: @escaping (CLKComplicationTimelineEntry?) -> Void) {
         
         let template: CLKComplicationTemplate
-        let state = Game(myLife: 15, opponentLife: 30)
+        let state = CounterController.shared.currentGameHistory.currentState
 
         switch complication.family {
         case .graphicCorner:

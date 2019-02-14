@@ -1,19 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="14460.31" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="AgC-eL-Hgc">
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="14490.59" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="AgC-eL-Hgc">
     <device id="watch44" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="watchOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="14460.16"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.45"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="14490.20"/>
     </dependencies>
     <scenes>
         <!--Interface Controller-->
         <scene sceneID="aou-V4-d1y">
             <objects>
-                <controller id="AgC-eL-Hgc" customClass="InterfaceController" customModule="magiccounter_WatchKit_App" customModuleProvider="target"/>
+                <controller id="AgC-eL-Hgc" customClass="InterfaceController" customModule="magiccounter_WatchKit_App" customModuleProvider="target">
+                    <items>
+                        <group width="1" height="0.10000000000000001" alignment="center" id="HyR-9r-T2a">
+                            <items>
+                                <label width="0.5" alignment="center" verticalAlignment="center" text="ME" textAlignment="center" id="zX7-5B-vIr">
+                                    <fontDescription key="font" style="UICTFontTextStyleHeadline"/>
+                                </label>
+                                <label width="0.5" alignment="center" verticalAlignment="center" text="OPP" textAlignment="center" id="C2H-Li-V5B">
+                                    <fontDescription key="font" style="UICTFontTextStyleHeadline"/>
+                                </label>
+                            </items>
+                        </group>
+                        <group width="1" height="0.90000000000000002" alignment="left" id="DRJ-jT-cxz">
+                            <items>
+                                <picker width="0.5" height="1" alignment="left" focusStyle="sequence" indicatorMode="shownWhileFocused" id="bzC-kv-HhV" userLabel="My Life">
+                                    <connections>
+                                        <action selector="myLifeChanged:" destination="AgC-eL-Hgc" id="TYY-Ae-Rv6"/>
+                                    </connections>
+                                </picker>
+                                <picker width="0.5" height="1" alignment="right" focusStyle="sequence" indicatorMode="shownWhileFocused" id="H4T-ma-D4W" userLabel="Opponent Life">
+                                    <connections>
+                                        <action selector="opponentLifeChanged:" destination="AgC-eL-Hgc" id="gdH-Bz-cL8"/>
+                                    </connections>
+                                </picker>
+                            </items>
+                        </group>
+                    </items>
+                    <connections>
+                        <outlet property="myLifePicker" destination="bzC-kv-HhV" id="c41-Hz-0Lc"/>
+                        <outlet property="opponentLifePicker" destination="H4T-ma-D4W" id="n34-0t-K7a"/>
+                    </connections>
+                </controller>
             </objects>
+            <point key="canvasLocation" x="131.56521739130434" y="135.84821428571428"/>
         </scene>
     </scenes>
 </document>
