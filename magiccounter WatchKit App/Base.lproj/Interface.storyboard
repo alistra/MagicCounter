@@ -39,6 +39,13 @@
                             </items>
                         </group>
                     </items>
+                    <menu key="menu" id="ahd-NV-eWG">
+                        <items>
+                            <menuItem title="I WON" icon="accept" id="wYB-9L-3uN"/>
+                            <menuItem title="THEY WON" icon="decline" id="jrL-2H-tyB"/>
+                            <menuItem title="RESET" icon="trash" id="LAp-vR-mM0"/>
+                        </items>
+                    </menu>
                     <connections>
                         <outlet property="myLifePicker" destination="bzC-kv-HhV" id="c41-Hz-0Lc"/>
                         <outlet property="opponentLifePicker" destination="H4T-ma-D4W" id="n34-0t-K7a"/>

@@ -81,8 +81,38 @@ class ComplicationController: NSObject, CLKComplicationDataSource {
     // MARK: - Placeholder Templates
     
     func getLocalizableSampleTemplate(for complication: CLKComplication, withHandler handler: @escaping (CLKComplicationTemplate?) -> Void) {
-        // This method will be called once per supported complication, and the results will be cached
-        handler(nil)
+        
+        let template: CLKComplicationTemplate
+        let state = Game(myLife: 20, opponentLife: 20)
+        
+        switch complication.family {
+        case .graphicCorner:
+            
+            let gaugeTemplate = CLKComplicationTemplateGraphicCornerGaugeText()
+            gaugeTemplate.leadingTextProvider = CLKTextProvider.localizableTextProvider(withStringsFileTextKey: String(state.myLife))
+            gaugeTemplate.trailingTextProvider = CLKTextProvider.localizableTextProvider(withStringsFileTextKey: String(state.opponentLife))
+            
+            let fraction = Float(state.myLife) / Float(state.myLife + state.opponentLife)
+            
+            let gaugeProvider = CLKSimpleGaugeProvider(style: .ring,
+                                                       gaugeColors: [.green, .orange],
+                                                       gaugeColorLocations: [0, NSNumber(value: fraction)],
+                                                       fillFraction: fraction)
+            gaugeTemplate.gaugeProvider = gaugeProvider
+            gaugeTemplate.outerTextProvider = CLKTextProvider.localizableTextProvider(withStringsFileTextKey: "LIFE")
+            template = gaugeTemplate
+            
+        case .modularSmall:
+            let simpleTextTemplate = CLKComplicationTemplateModularSmallSimpleText()
+            simpleTextTemplate.textProvider = CLKTextProvider.localizableTextProvider(withStringsFileTextKey: "\(state.myLife)/\(state.opponentLife)")
+            template = simpleTextTemplate
+            
+        default:
+            handler(nil)
+            return
+        }
+        
+        handler(template)
     }
     
 }

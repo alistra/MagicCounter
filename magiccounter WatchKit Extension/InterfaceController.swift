@@ -41,34 +41,52 @@ class InterfaceController: WKInterfaceController {
     private var lastMyLifeValue: Int?
     private var lastOpponentLifeValue: Int?
     
-    @IBAction func myLifeChanged(_ value: Int) {
+    private func cancelMyLifeChanged() {
         if let lastValue = lastMyLifeValue {
             NSObject.cancelPreviousPerformRequests(withTarget: CounterController.shared,
                                                    selector: #selector(CounterController.change(myLife:)),
                                                    object: lastValue)
         }
+    }
+    
+    @IBAction func myLifeChanged(_ value: Int) {
+        cancelMyLifeChanged()
         
         let life = value + (InterfaceController.lifeRange.first ?? 0)
         lastMyLifeValue = life
         CounterController.shared.perform(#selector(CounterController.change(myLife:)), with: NSNumber(value: life), afterDelay: 1.5)
     }
     
-    @IBAction func opponentLifeChanged(_ value: Int) {
+    private func cancelOppLifeChanged() {
         if let lastValue = lastOpponentLifeValue {
             NSObject.cancelPreviousPerformRequests(withTarget: CounterController.shared,
                                                    selector: #selector(CounterController.change(opponentLife:)),
                                                    object: lastValue)
         }
+    }
+    
+    @IBAction func opponentLifeChanged(_ value: Int) {
+        cancelOppLifeChanged()
         
         let life = value + (InterfaceController.lifeRange.first ?? 0)
         
-        lastOpponentLifeValue = value
+        lastOpponentLifeValue = life
         CounterController.shared.perform(#selector(CounterController.change(opponentLife:)), with: NSNumber(value: life), afterDelay: 1.5)
     }
     
 
     override func didDeactivate() {
         super.didDeactivate()
+        
+        cancelMyLifeChanged()
+        cancelOppLifeChanged()
+        
+        if let myLife = lastMyLifeValue {
+            CounterController.shared.change(myLife: NSNumber(value: myLife))
+        }
+        if let oppLife = lastOpponentLifeValue {
+            CounterController.shared.change(opponentLife: NSNumber(value: oppLife))
+        }
         
         CLKComplicationServer.sharedInstance().activeComplications?.forEach {
             CLKComplicationServer.sharedInstance().reloadTimeline(for: $0)
