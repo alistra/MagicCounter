@@ -56,7 +56,7 @@ class InterfaceController: WKInterfaceController {
     
     @IBAction func reset() {
         savePending()
-        CounterController.shared.currentGameHistory.reset()
+        CounterController.shared.reset()
         updatePickers()
     }
     
@@ -108,8 +108,9 @@ class InterfaceController: WKInterfaceController {
         }
     }
     
-    override func didDeactivate() {
-        super.didDeactivate()
+    
+    override func willDisappear() {
+        super.willDisappear()
         
         cancelMyLifeChanged()
         cancelOppLifeChanged()
@@ -117,13 +118,8 @@ class InterfaceController: WKInterfaceController {
         savePending()
         
         CLKComplicationServer.sharedInstance().activeComplications?.forEach {
-
-            if CounterController.shared.currentGameHistory.currentState.date.addingTimeInterval(60) > Date() {
-                CLKComplicationServer.sharedInstance().reloadTimeline(for: $0)
-            } else {
-                CLKComplicationServer.sharedInstance().extendTimeline(for: $0)
-            }
+            
+            CLKComplicationServer.sharedInstance().extendTimeline(for: $0)
         }
     }
-
 }

@@ -7,11 +7,24 @@
 //
 
 import WatchKit
-
-class ExtensionDelegate: NSObject, WKExtensionDelegate {
+import WatchConnectivity
+class ExtensionDelegate: NSObject, WKExtensionDelegate, WCSessionDelegate {
+    
+    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        if activationState == .activated {
+            WCSession.default.transferUserInfo(
+                [
+                    UserDefaults.standard.previousGameHistoriesKey: UserDefaults.standard.previousGameHistoriesData as Any,
+                    UserDefaults.standard.currentGameHistoryKey: UserDefaults.standard.currentGameHistoryData as Any
+                ]
+            )
+        }
+    }
 
     func applicationDidFinishLaunching() {
-        // Perform any final initialization of your application.
+        let session = WCSession.default
+        session.delegate = self
+        session.activate()
     }
 
     func applicationDidBecomeActive() {

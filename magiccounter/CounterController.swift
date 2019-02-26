@@ -8,6 +8,10 @@
 
 import Foundation
 
+#if os(watchOS)
+import WatchConnectivity
+#endif
+
 class GameHistory: Codable {
     var states: [Game] = [Game.newGame]
     
@@ -23,10 +27,6 @@ class GameHistory: Codable {
         states.removeLast()
     }
     
-    func reset() {
-        states = [Game.newGame]
-    }
-    
     var currentState: Game {
         guard let last = states.last else {
             print("No history elements")
@@ -37,13 +37,7 @@ class GameHistory: Codable {
     }
 }
 
-struct Game: Codable, CustomStringConvertible {
-    enum Winner: Int, Codable {
-        case noWinnerYet
-        case me
-        case opponent
-        case none
-    }
+struct Game: Codable, CustomStringConvertible, Equatable {
     let myLife: Int
     let opponentLife: Int
     let date: Date = Date()
@@ -51,22 +45,13 @@ struct Game: Codable, CustomStringConvertible {
     static var newGame: Game {
         return Game(myLife: 20, opponentLife: 20)
     }
-    
-    var winner: Winner {
-        switch (myLife <= 0, opponentLife <= 0) {
-        case (false, false):
-            return .noWinnerYet
-        case (true, false):
-            return .opponent
-        case (false, true):
-            return .me
-        case (true, true):
-            return .none
-        }
-    }
-    
+
     var description: String {
         return "Game(me: \(myLife), opp: \(opponentLife))"
+    }
+    
+    static func == (lhs: Game, rhs: Game) -> Bool {
+        return lhs.myLife == rhs.myLife && lhs.opponentLife == rhs.opponentLife
     }
 }
 
@@ -74,29 +59,57 @@ class CounterController: NSObject {
     public static let shared = CounterController()
     private let userDefaults: UserDefaults = .standard
     
+    var gameHistories: [GameHistory] {
+        return previousGameHistories + [currentGameHistory]
+    }
+    
     var firstGameHistory: GameHistory {
-        return userDefaults.previousGameHistories.first!
+        return previousGameHistories.first!
     }
     
     var currentGameHistory: GameHistory {
         return userDefaults.currentGameHistory
     }
     
+    var previousGameHistories: [GameHistory] {
+        return userDefaults.previousGameHistories
+    }
+    
     var allStates: [Game] {
-        return userDefaults.previousGameHistories.flatMap { $0.states } + userDefaults.currentGameHistory.states
+        return previousGameHistories.flatMap { $0.states } + currentGameHistory.states
+    }
+    
+    func reset() {
+        userDefaults.currentGameHistory = GameHistory()
     }
     
     func nextGame() {
-        userDefaults.previousGameHistories.append(userDefaults.currentGameHistory)
+        userDefaults.previousGameHistories.append(currentGameHistory)
         userDefaults.currentGameHistory = GameHistory()
+        
+        #if os(watchOS)
+        WCSession.default.transferUserInfo([
+            UserDefaults.standard.previousGameHistoriesKey: userDefaults.previousGameHistoriesData as Any,
+            UserDefaults.standard.currentGameHistoryKey: userDefaults.currentGameHistoryData as Any
+        ])
+        #endif
     }
 
     private func modifyHistory(block: (Game) -> (Game)) {
-        let history = userDefaults.currentGameHistory
-        history.states.append(block(userDefaults.currentGameHistory.currentState))
+        let history = currentGameHistory
+        let newState = block(currentGameHistory.currentState)
+
+        guard newState != currentGameHistory.currentState else {
+            return
+        }
+        
+        history.states.append(newState)
         userDefaults.currentGameHistory = history
- 
-        print(history.states)
+        #if os(watchOS)
+        WCSession.default.transferUserInfo([
+            UserDefaults.standard.currentGameHistoryKey: userDefaults.currentGameHistoryData as Any
+        ])
+        #endif
     }
     
     @objc func change(myLife: NSNumber) {
@@ -116,6 +129,32 @@ extension UserDefaults {
     var currentGameHistoryKey: String { return "currentGameHistoryKey" }
     var previousGameHistoriesKey: String { return "previousGameHistoriesKey" }
     
+    func gameHistories(from data: Data) throws -> [GameHistory] {
+        return try JSONDecoder().decode([GameHistory].self, from: data)
+    }
+    
+    func data(from gameHistories: [GameHistory]) throws -> Data {
+        return try JSONEncoder().encode(gameHistories)
+    }
+    
+    var currentGameHistoryData: Data? {
+        get {
+            return data(forKey: currentGameHistoryKey)
+        }
+        set {
+            set(newValue, forKey: currentGameHistoryKey)
+        }
+    }
+    
+    var previousGameHistoriesData: Data? {
+        get {
+            return data(forKey: previousGameHistoriesKey)
+        }
+        set {
+            set(newValue, forKey: previousGameHistoriesKey)
+        }
+    }
+    
     var currentGameHistory: GameHistory {
         get {
             guard let historyData = data(forKey: currentGameHistoryKey) else {
@@ -124,7 +163,7 @@ extension UserDefaults {
             }
             
             do {
-                guard let history = try JSONDecoder().decode([GameHistory].self, from: historyData).first else {
+                guard let history = try gameHistories(from: historyData).first else {
                     print("Current history not encoded as an array")
                     return GameHistory()
                 }
@@ -138,8 +177,8 @@ extension UserDefaults {
         
         set {
             do {
-                let historyData = try JSONEncoder().encode([newValue])
-                set(historyData, forKey: currentGameHistoryKey)
+                let historiesData = try data(from: [newValue])
+                set(historiesData, forKey: currentGameHistoryKey)
             } catch {
                 print("Couldn't encode current history \(error)")
             }
@@ -154,7 +193,7 @@ extension UserDefaults {
             }
             
             do {
-                return try JSONDecoder().decode([GameHistory].self, from: historiesData)
+                return try gameHistories(from: historiesData)
             } catch {
                 print("Can't decode previous histories \(error)")
                 return []
@@ -163,7 +202,7 @@ extension UserDefaults {
         
         set {
             do {
-                let historiesData = try JSONEncoder().encode(newValue)
+                let historiesData = try data(from: newValue)
                 set(historiesData, forKey: previousGameHistoriesKey)
             } catch {
                 print("Couldn't encode previous histories \(error)")

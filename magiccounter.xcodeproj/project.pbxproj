@@ -66,6 +66,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5B3F484A2225411F0013CF44 /* magiccounter.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = magiccounter.entitlements; sourceTree = "<group>"; };
 		5B7928F92210C250004BBB14 /* magiccounter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = magiccounter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B7928FC2210C250004BBB14 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5B7928FE2210C250004BBB14 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -126,6 +127,7 @@
 		5B7928FB2210C250004BBB14 /* magiccounter */ = {
 			isa = PBXGroup;
 			children = (
+				5B3F484A2225411F0013CF44 /* magiccounter.entitlements */,
 				5B7928FC2210C250004BBB14 /* AppDelegate.swift */,
 				5B7928FE2210C250004BBB14 /* ViewController.swift */,
 				5B7929032210C251004BBB14 /* Assets.xcassets */,
@@ -227,6 +229,11 @@
 					5B7928F82210C250004BBB14 = {
 						CreatedOnToolsVersion = 10.1;
 						LastSwiftMigration = 1020;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 0;
+							};
+						};
 					};
 					5B79290A2210C251004BBB14 = {
 						CreatedOnToolsVersion = 10.1;
