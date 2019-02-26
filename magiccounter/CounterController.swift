@@ -23,6 +23,10 @@ class GameHistory: Codable {
         states.removeLast()
     }
     
+    func reset() {
+        states = [Game.newGame]
+    }
+    
     var currentState: Game {
         guard let last = states.last else {
             print("No history elements")
@@ -42,6 +46,7 @@ struct Game: Codable, CustomStringConvertible {
     }
     let myLife: Int
     let opponentLife: Int
+    let date: Date = Date()
     
     static var newGame: Game {
         return Game(myLife: 20, opponentLife: 20)
@@ -69,8 +74,21 @@ class CounterController: NSObject {
     public static let shared = CounterController()
     private let userDefaults: UserDefaults = .standard
     
+    var firstGameHistory: GameHistory {
+        return userDefaults.previousGameHistories.first!
+    }
+    
     var currentGameHistory: GameHistory {
         return userDefaults.currentGameHistory
+    }
+    
+    var allStates: [Game] {
+        return userDefaults.previousGameHistories.flatMap { $0.states } + userDefaults.currentGameHistory.states
+    }
+    
+    func nextGame() {
+        userDefaults.previousGameHistories.append(userDefaults.currentGameHistory)
+        userDefaults.currentGameHistory = GameHistory()
     }
 
     private func modifyHistory(block: (Game) -> (Game)) {

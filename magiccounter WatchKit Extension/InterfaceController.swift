@@ -26,16 +26,38 @@ class InterfaceController: WKInterfaceController {
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
         
-        let game = CounterController.shared.currentGameHistory.currentState
-        
-        let startMyIndex = items.lastIndex(where: { $0.title == "\(game.myLife)"}) ?? 41
-        let startOpponentIndex = items.lastIndex(where: { $0.title == "\(game.opponentLife)"}) ?? 41
         
         myLifePicker?.setItems(items)
         opponentLifePicker?.setItems(items)
         
+        updatePickers()
+    }
+    
+    private func updatePickers() {
+        let game = CounterController.shared.currentGameHistory.currentState
+        let startMyIndex = items.lastIndex(where: { $0.title == "\(game.myLife)"}) ?? 41
+        let startOpponentIndex = items.lastIndex(where: { $0.title == "\(game.opponentLife)"}) ?? 41
+        
         myLifePicker?.setSelectedItemIndex(startMyIndex)
         opponentLifePicker?.setSelectedItemIndex(startOpponentIndex)
+    }
+    
+    @IBAction func iWon() {
+        savePending()
+        CounterController.shared.nextGame()
+        updatePickers()
+    }
+    
+    @IBAction func theyWon() {
+        savePending()
+        CounterController.shared.nextGame()
+        updatePickers()
+    }
+    
+    @IBAction func reset() {
+        savePending()
+        CounterController.shared.currentGameHistory.reset()
+        updatePickers()
     }
     
     private var lastMyLifeValue: Int?
@@ -75,21 +97,32 @@ class InterfaceController: WKInterfaceController {
     }
     
 
+    private func savePending() {
+        if let myLife = lastMyLifeValue {
+            CounterController.shared.change(myLife: NSNumber(value: myLife))
+            lastMyLifeValue = nil
+        }
+        if let oppLife = lastOpponentLifeValue {
+            CounterController.shared.change(opponentLife: NSNumber(value: oppLife))
+            lastOpponentLifeValue = nil
+        }
+    }
+    
     override func didDeactivate() {
         super.didDeactivate()
         
         cancelMyLifeChanged()
         cancelOppLifeChanged()
         
-        if let myLife = lastMyLifeValue {
-            CounterController.shared.change(myLife: NSNumber(value: myLife))
-        }
-        if let oppLife = lastOpponentLifeValue {
-            CounterController.shared.change(opponentLife: NSNumber(value: oppLife))
-        }
+        savePending()
         
         CLKComplicationServer.sharedInstance().activeComplications?.forEach {
-            CLKComplicationServer.sharedInstance().reloadTimeline(for: $0)
+
+            if CounterController.shared.currentGameHistory.currentState.date.addingTimeInterval(60) > Date() {
+                CLKComplicationServer.sharedInstance().reloadTimeline(for: $0)
+            } else {
+                CLKComplicationServer.sharedInstance().extendTimeline(for: $0)
+            }
         }
     }
 

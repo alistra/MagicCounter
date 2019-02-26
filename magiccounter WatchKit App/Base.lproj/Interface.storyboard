@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="14490.59" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="AgC-eL-Hgc">
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="14490.64" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="AgC-eL-Hgc">
     <device id="watch44" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="watchOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.45"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.47"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="14490.20"/>
     </dependencies>
     <scenes>
@@ -41,9 +41,21 @@
                     </items>
                     <menu key="menu" id="ahd-NV-eWG">
                         <items>
-                            <menuItem title="I WON" icon="accept" id="wYB-9L-3uN"/>
-                            <menuItem title="THEY WON" icon="decline" id="jrL-2H-tyB"/>
-                            <menuItem title="RESET" icon="trash" id="LAp-vR-mM0"/>
+                            <menuItem title="I WON" icon="accept" id="wYB-9L-3uN">
+                                <connections>
+                                    <action selector="iWon" destination="AgC-eL-Hgc" id="FKN-4E-rXY"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="THEY WON" icon="decline" id="jrL-2H-tyB">
+                                <connections>
+                                    <action selector="theyWon" destination="AgC-eL-Hgc" id="CEU-mF-6Pf"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="RESET" icon="trash" id="LAp-vR-mM0">
+                                <connections>
+                                    <action selector="reset" destination="AgC-eL-Hgc" id="0rx-Xo-TXp"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                     <connections>
